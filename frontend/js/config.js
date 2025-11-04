@@ -6,7 +6,7 @@
 const config = {
     apiBaseUrl: window.location.hostname === 'localhost' 
         ? 'http://localhost:5000/api'
-        : 'https://your-backend-url.onrender.com/api', // Replace with your actual backend URL
+        : 'https://blogzy-01kf.onrender.com/api', // Render backend URL
     environment: window.location.hostname === 'localhost' ? 'development' : 'production'
 };
 

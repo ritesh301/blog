@@ -180,9 +180,13 @@ async function handleBlogFormSubmit(title, author, category, imageUrl, content) 
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Publishing...';
     
     try {
-        // Create blog via direct fetch
+        // Create blog using the API
         const token = localStorage.getItem('token');
-        const response = await fetch('/api/blogs', {
+        const apiUrl = `${config.apiBaseUrl}/blogs`;
+        
+        console.log('Making request to:', apiUrl);
+        
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -195,6 +199,15 @@ async function handleBlogFormSubmit(title, author, category, imageUrl, content) 
                 content
             })
         });
+        
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            throw new Error(`Server returned ${response.status}: ${errorText}`);
+        }
         
         const data = await response.json();
         console.log('API response:', data);

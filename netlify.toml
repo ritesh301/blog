@@ -1,6 +1,6 @@
 # Netlify Configuration
 [build]
-  publish = "."
+  publish = "frontend"
   command = "echo 'No build required - static site'"
 
 # Redirect all API calls to backend server

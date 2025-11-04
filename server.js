@@ -14,7 +14,7 @@ const app = express();
 // CORS Configuration
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production' 
-        ? ['https://your-site-name.netlify.app', 'https://www.your-site-name.netlify.app'] // Update with your Netlify URL
+        ? ['https://blogzzyy.netlify.app', 'https://www.blogzzyy.netlify.app'] // Netlify frontend URL
         : '*',
     credentials: true,
     optionsSuccessStatus: 200

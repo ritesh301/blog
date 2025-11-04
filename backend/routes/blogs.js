@@ -174,6 +174,14 @@ router.post('/', protect, [
     try {
         const { title, content, category, image } = req.body;
 
+        console.log('Creating blog:', { 
+            title, 
+            category, 
+            imageType: image?.substring(0, 30),
+            userId: req.user._id,
+            userName: req.user.name
+        });
+
         const blog = await Blog.create({
             title,
             content,
@@ -185,6 +193,8 @@ router.post('/', protect, [
 
         const populatedBlog = await Blog.findById(blog._id).populate('author', 'name email');
 
+        console.log('Blog created successfully:', blog._id);
+
         res.status(201).json({
             success: true,
             message: 'Blog created successfully!',
@@ -192,9 +202,10 @@ router.post('/', protect, [
         });
     } catch (error) {
         console.error('Create blog error:', error);
+        console.error('Error details:', error.message);
         res.status(500).json({
             success: false,
-            message: 'Error creating blog'
+            message: 'Error creating blog: ' + error.message
         });
     }
 });

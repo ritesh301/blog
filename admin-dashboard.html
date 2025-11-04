@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Blogzy</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        .admin-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 250px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 20px 0;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .admin-content {
+            margin-left: 250px;
+            min-height: 100vh;
+            background: var(--bg-primary);
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin: 0;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .sidebar-menu i {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card i {
+            font-size: 40px;
+            color: var(--primary-color);
+        }
+        
+        .stat-info h3 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .stat-info p {
+            margin: 5px 0 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .admin-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Admin Sidebar -->
+    <div class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-header">
+            <h4><i class="fas fa-shield-alt me-2"></i>Admin Panel</h4>
+            <small class="text-secondary" id="adminUsername">Loading...</small>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li>
+                <a href="admin-dashboard.html" class="active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin-blogs.html">
+                    <i class="fas fa-blog"></i>
+                    <span>Manage Blogs</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin-users.html">
+                    <i class="fas fa-users"></i>
+                    <span>Manage Users</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin-contacts.html">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact Messages</span>
+                </a>
+            </li>
+            <li>
+                <a href="write-blog.html">
+                    <i class="fas fa-pen"></i>
+                    <span>Write Blog</span>
+                </a>
+            </li>
+            <li>
+                <a href="index.html">
+                    <i class="fas fa-home"></i>
+                    <span>View Website</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="handleLogout(); return false;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    <!-- Admin Content -->
+    <div class="admin-content">
+        <!-- Top Bar -->
+        <nav class="navbar navbar-expand-lg" style="background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);">
+            <div class="container-fluid">
+                <button class="btn btn-link d-md-none" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <h5 class="mb-0">Dashboard Overview</h5>
+                
+                <div class="ms-auto">
+                    <button class="theme-toggle" type="button" aria-label="Toggle theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <div class="container-fluid p-4">
+            
+            <!-- Welcome Section -->
+            <div class="mb-4">
+                <h2>Welcome, <span id="welcomeUser">Admin</span>! 👋</h2>
+                <p class="text-secondary">Here's what's happening with your blog platform today.</p>
+            </div>
+            
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-blog"></i>
+                    <div class="stat-info">
+                        <h3 id="totalBlogs">0</h3>
+                        <p>Total Blogs</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <div class="stat-info">
+                        <h3 id="totalUsers">0</h3>
+                        <p>Total Users</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <i class="fas fa-heart"></i>
+                    <div class="stat-info">
+                        <h3 id="totalLikes">0</h3>
+                        <p>Total Likes</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <i class="fas fa-envelope"></i>
+                    <div class="stat-info">
+                        <h3 id="totalContacts">0</h3>
+                        <p>Contact Messages</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="row mt-4">
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-tasks me-2"></i>Quick Actions</h5>
+                            <div class="d-grid gap-2 mt-3">
+                                <a href="admin-blogs.html" class="btn btn-outline-primary">
+                                    <i class="fas fa-blog me-2"></i>Manage All Blogs
+                                </a>
+                                <a href="admin-users.html" class="btn btn-outline-success">
+                                    <i class="fas fa-users me-2"></i>View All Users
+                                </a>
+                                <a href="admin-contacts.html" class="btn btn-outline-info">
+                                    <i class="fas fa-envelope me-2"></i>Check Messages
+                                </a>
+                                <a href="write-blog.html" class="btn btn-primary">
+                                    <i class="fas fa-pen me-2"></i>Write New Blog
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-chart-line me-2"></i>Recent Activity</h5>
+                            <ul class="list-group list-group-flush mt-3" id="recentActivity">
+                                <li class="list-group-item">Loading activity...</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Blogs Preview -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0"><i class="fas fa-newspaper me-2"></i>Recent Blogs</h5>
+                        <a href="admin-blogs.html" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>Category</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentBlogsTable">
+                                <tr>
+                                    <td colspan="5" class="text-center py-3">
+                                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                        <span class="ms-2">Loading...</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    
+    <script>
+        // Check admin authentication
+        function checkAdminAuth() {
+            const userStr = localStorage.getItem('user');
+            console.log('Raw user string from localStorage:', userStr);
+            
+            const user = (userStr && userStr !== 'undefined' && userStr !== 'null') ? JSON.parse(userStr) : null;
+            console.log('Parsed user object:', user);
+            console.log('User role:', user?.role);
+            
+            if (!user || user.role !== 'admin') {
+                console.error('Access denied. User:', user);
+                alert('Access denied. Admin only!');
+                window.location.href = 'admin.html';
+                return false;
+            }
+            document.getElementById('adminUsername').textContent = user.name;
+            document.getElementById('welcomeUser').textContent = user.name;
+            return true;
+        }
+        
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            document.getElementById('adminSidebar').classList.toggle('show');
+        }
+        
+        // Load dashboard statistics
+        async function loadDashboardStats() {
+            try {
+                // Fetch all data
+                const [blogs, users, contacts] = await Promise.all([
+                    api.getAllBlogs({ limit: 1000 }),
+                    api.getAllUsers(),
+                    api.getAllContacts()
+                ]);
+                
+                console.log('Dashboard data loaded:', { blogs, users, contacts });
+                
+                // Calculate statistics
+                const totalBlogs = blogs?.length || 0;
+                const totalUsers = users?.length || 0;
+                const totalLikes = blogs?.reduce((sum, blog) => sum + (blog.likes || 0), 0) || 0;
+                const totalContacts = contacts?.length || 0;
+                
+                // Update UI
+                document.getElementById('totalBlogs').textContent = totalBlogs;
+                document.getElementById('totalUsers').textContent = totalUsers;
+                document.getElementById('totalLikes').textContent = totalLikes;
+                document.getElementById('totalContacts').textContent = totalContacts;
+                
+                // Load recent blogs
+                loadRecentBlogs(blogs?.slice(0, 5) || []);
+                
+                // Load activity
+                loadRecentActivity(blogs);
+                
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+            }
+        }
+        
+        // Load recent blogs
+        function loadRecentBlogs(blogs) {
+            const tbody = document.getElementById('recentBlogsTable');
+            
+            if (!blogs || blogs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-3">No blogs found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = blogs.map(blog => `
+                <tr>
+                    <td>${blog.title}</td>
+                    <td>${blog.authorName}</td>
+                    <td><span class="badge bg-primary">${blog.category}</span></td>
+                    <td>${new Date(blog.createdAt).toLocaleDateString()}</td>
+                    <td>
+                        <a href="admin-blogs.html" class="btn btn-sm btn-outline-primary">View</a>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // Load recent activity
+        function loadRecentActivity(blogs) {
+            const activityList = document.getElementById('recentActivity');
+            
+            if (!blogs || blogs.length === 0) {
+                activityList.innerHTML = '<li class="list-group-item">No recent activity</li>';
+                return;
+            }
+            
+            const recentBlogs = blogs.slice(0, 5);
+            activityList.innerHTML = recentBlogs.map(blog => `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-blog text-primary me-2"></i>
+                        <small><strong>${blog.authorName}</strong> published "${blog.title}"</small>
+                    </div>
+                    <small class="text-muted">${new Date(blog.createdAt).toLocaleDateString()}</small>
+                </li>
+            `).join('');
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAdminAuth()) {
+                loadDashboardStats();
+            }
+        });
+    </script>
+    
+</body>
+</html>
